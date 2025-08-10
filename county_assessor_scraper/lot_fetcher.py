@@ -1,11 +1,11 @@
-# from selenium import webdriver
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 from bs4 import BeautifulSoup
 
-from selenium import webdriver
+# from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
@@ -151,14 +151,18 @@ def parse_property_details(html: str) -> dict:
     }
 
 
-def main():
+def query_property_and_write(iterator):
     debug = False
     delimiter = '|'
     count = 1
-    with open('locator_number_list.txt') as fi, open('parcel_output_data.csv', 'w') as fo:
+    input_file_name = 'locator_number_list_part_%d.txt' % iterator
+    output_file_name = 'locator_output_data_part_%d.csv' % iterator
+    # input_file_name = 'locator_number_list.txt'
+    # output_file_name = 'locator_output_data.csv'
+    with open(input_file_name) as fi, open(output_file_name, 'w') as fo:
         for line in fi:
-            if count > 200:
-                return
+            # if count > 200:
+            #     return
             for attempt in range(3):
                 try:
                     locator_number = line.rstrip()
@@ -170,7 +174,7 @@ def main():
                     results_details = parse_property_details(results_page)
                     if debug:
                         print(results_details)
-                    
+
                     # tax_results_page = fetch_tax_page_by_locator_number(
                     #     locator_number,
                     #     debug=debug
@@ -198,8 +202,14 @@ def main():
                     continue
                 else:
                     break
-            
             count += 1
+
+
+def main():
+    i = 1
+    for i in range(17, 19):
+        query_property_and_write(i)
+
 
 if __name__ == '__main__':
     startTime = datetime.now()
