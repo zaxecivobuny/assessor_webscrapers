@@ -65,8 +65,25 @@ def parse_tax_details_page(html: str) -> dict:
     if len(cells) < 2:
         return {}
 
+    target_a_inner_html = None
+
+    # Find all table rows with payment history
+    rows = soup.select("#PaymentHistoryNF > div.panel-body.overflow-auto > table > tbody > tr")
+
+    for i in range(0, len(rows), 2):
+        td4 = rows[i].select_one("td:nth-of-type(4)")
+        if td4:
+            value = td4.get_text(strip=True)
+            if value != "$0.00":
+                # Now grab the <a> in that same row under td.text-center
+                a_tag = rows[i].select_one("td.text-center > a")
+                if a_tag:
+                    target_a_inner_html = a_tag.decode_contents()
+                break  # stop after first match
+
     return {
         "unpaid_tax_total": cells[1].get_text(strip=True),
+        "last_year_paid": target_a_inner_html,
     }
 
 
@@ -77,7 +94,7 @@ def query_and_write(iterator):
     # input_file_name = 'locator_number_list_part_%d.txt' % iterator
     # output_file_name = 'tax_output_data_part_%d.csv' % iterator
     input_file_name = 'locator_number_list.txt'
-    output_file_name = 'tax_output_data.csv'
+    output_file_name = 'tax_output_data_rich.csv'
     with open(input_file_name) as fi, open(output_file_name, 'w') as fo:
         for line in fi:
             # if count > 200:
@@ -98,6 +115,8 @@ def query_and_write(iterator):
                     data_row = locator_number
                     data_row += delimiter
                     data_row += tax_details['unpaid_tax_total']
+                    data_row += delimiter
+                    data_row += tax_details['last_year_paid']
                     data_row += '\n'
                     fo.write(data_row)
 
