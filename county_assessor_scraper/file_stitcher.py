@@ -11,7 +11,7 @@ def stitch_files(source_file_name, parts):
 
 
 def main():
-    source_file_name = 'locator_output_data_part_%d.csv'
+    source_file_name = 'data/locator_output_data_part_%d.csv'
     stitch_files(source_file_name, 18)
     # section_size = 200
     # split_file(source_file_name, section_size)

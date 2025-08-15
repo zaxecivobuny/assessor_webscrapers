@@ -214,7 +214,7 @@ def main():
     debug = False
     delimiter = '|'
     count = 1
-    with open('locator_number_list_sample.txt') as fi, open('output_data.csv', 'w') as fo:
+    with open('data/locator_number_list_sample.txt') as fi, open('data/output_data.csv', 'w') as fo:
         for line in fi:
             for attempt in range(3):
                 try:

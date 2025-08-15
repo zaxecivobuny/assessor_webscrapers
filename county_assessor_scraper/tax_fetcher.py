@@ -41,40 +41,19 @@ def parse_tax_details_page(html: str) -> dict:
 
     soup = BeautifulSoup(html, "html.parser")
 
-    # Step 1: Get all divs with the target class
-    divs = soup.find_all('div', class_='panel-body overflow-auto')
-    
-    if len(divs) < 2:
-        return {}  # Not enough divs
-
-    # Step 2: Select the second div (index 1)
-    target_div = divs[1]
-    
-    # Step 3: Find the table inside this div
-    table = target_div.find('table')
-    
-    if not table or not table.tbody:
-        return {}
-
-    # Step 4: Get the first row in table body
-    first_row = table.tbody.find('tr')
-    if not first_row:
-        return {}
-
-    cells = first_row.find_all('td')
-    if len(cells) < 2:
-        return {}
-
     target_a_inner_html = None
+
+    unpaid_cell = soup.select('#Billing1 > div:nth-child(2) > div:nth-child(2) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(7) > td:nth-child(2)')
+
 
     # Find all table rows with payment history
     rows = soup.select("#PaymentHistoryNF > div.panel-body.overflow-auto > table > tbody > tr")
 
     for i in range(0, len(rows), 2):
-        td4 = rows[i].select_one("td:nth-of-type(4)")
-        if td4:
-            value = td4.get_text(strip=True)
-            if value != "$0.00":
+        td5 = rows[i].select_one("td:nth-of-type(5)")
+        if td5:
+            value = td5.get_text(strip=True)
+            if value == "$0.00":
                 # Now grab the <a> in that same row under td.text-center
                 a_tag = rows[i].select_one("td.text-center > a")
                 if a_tag:
@@ -82,7 +61,7 @@ def parse_tax_details_page(html: str) -> dict:
                 break  # stop after first match
 
     return {
-        "unpaid_tax_total": cells[1].get_text(strip=True),
+        "unpaid_tax_total": unpaid_cell[0].get_text(strip=True),
         "last_year_paid": target_a_inner_html,
     }
 
@@ -93,8 +72,8 @@ def query_and_write(iterator):
     count = 1
     # input_file_name = 'locator_number_list_part_%d.txt' % iterator
     # output_file_name = 'tax_output_data_part_%d.csv' % iterator
-    input_file_name = 'locator_number_list.txt'
-    output_file_name = 'tax_output_data_rich.csv'
+    input_file_name = 'data/locator_number_list.txt'
+    output_file_name = 'data/tax_output_data_rich.csv'
     with open(input_file_name) as fi, open(output_file_name, 'w') as fo:
         for line in fi:
             # if count > 200:

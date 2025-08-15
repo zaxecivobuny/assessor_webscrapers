@@ -39,7 +39,7 @@ def my_split_file(file_name, section_size):
 
 
 def main():
-    source_file_name = 'locator_number_list.txt'
+    source_file_name = 'data/locator_number_list.txt'
     section_size = 200
     split_file(source_file_name, section_size)
 

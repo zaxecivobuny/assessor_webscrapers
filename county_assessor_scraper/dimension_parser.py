@@ -38,8 +38,8 @@ def main():
     # print('a', a)
     # a = parse_dimension_string('0120 / 0090 -  0113 / 0102')
     # print('a', a)
-    with open('dimensions.txt', 'r') as input_file:
-        with open('dim_output.txt', 'w') as output_file:
+    with open('data/dimensions.txt', 'r') as input_file:
+        with open('data/dim_output.txt', 'w') as output_file:
             for line in input_file:
                 string = line.rstrip()
                 result = parse_dimension_string(string)

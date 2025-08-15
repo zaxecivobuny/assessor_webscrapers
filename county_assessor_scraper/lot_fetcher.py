@@ -155,8 +155,8 @@ def query_property_and_write(iterator):
     debug = False
     delimiter = '|'
     count = 1
-    input_file_name = 'locator_number_list_part_%d.txt' % iterator
-    output_file_name = 'locator_output_data_part_%d.csv' % iterator
+    input_file_name = 'data/locator_number_list_part_%d.txt' % iterator
+    output_file_name = 'data/locator_output_data_part_%d.csv' % iterator
     # input_file_name = 'locator_number_list.txt'
     # output_file_name = 'locator_output_data.csv'
     with open(input_file_name) as fi, open(output_file_name, 'w') as fo:
