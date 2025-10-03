@@ -11,15 +11,17 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from datetime import datetime
 
-
 options = webdriver.ChromeOptions()
 options.add_argument("--headless=new")  # or just --headless for older Chrome
 options.add_argument("--disable-gpu")
 options.add_argument("--window-size=1920,1080")
 
+
 service = Service(ChromeDriverManager().install())
+
 driver = webdriver.Chrome(service=service, options=options)
 # Now you can use driver.get(), etc.
+
 
 def reset_connection():
     global service
@@ -28,19 +30,17 @@ def reset_connection():
     driver = webdriver.Chrome(service=service, options=options)
 
 
-
-
 # Define your input
-# locator_number
+# address
 
-def fetch_property_page_by_locator_number(locator_number, debug=False):
+def fetch_property_page_by_address(address, debug=False):
     if debug:
-        print("fetching property details for:",locator_number)
+        print("fetching property details for:", address)
     try:
         # Step 1: Go to the form page
         if debug:
             print("step 1")
-        driver.get("https://revenue.stlouisco.com/RealEstate/SearchInput.aspx")
+        driver.get("https://www.stlouis-mo.gov/data/address-search/")
 
         if debug:
             time.sleep(2)
@@ -48,75 +48,65 @@ def fetch_property_page_by_locator_number(locator_number, debug=False):
             print(driver.page_source[:1000])  # Print first 1000 characters for debugging
 
 
-        # Step 2: Make sure "Locator Number" radio button is selected
+        # Step 2: Fill in address form
         if debug:
-            print("step 2")
-        # prop_addr_radio = driver.find_element(By.ID, "ctl00_MainContent_rbutAddress")
-        locator_number_radio = driver.find_element(
+            print("step 2: fill in form")
+        driver.find_element(
             By.ID,
-            "ctl00_MainContent_rbutLocatorNum"
-        )
-        if not locator_number_radio.is_selected():
-            locator_number_radio.click()
-            time.sleep(1)  # Let it trigger the postback
+            "streetAddress"
+        ).send_keys(address)
 
-        # Step 3: Fill in address form
+        # Step 3: Click the Search button
         if debug:
             print("step 3")
         driver.find_element(
-            By.ID,
-            "ctl00_MainContent_tboxLocatorNum"
-        ).send_keys(locator_number)
-
-        # Step 4: Click the Search button
-        if debug:
-            print("step 4")
-        driver.find_element(By.ID, "ctl00_MainContent_butFind").click()
-
-        # Step 5: Wait for results table
-        if debug:
-            print("step 5")
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.ID, "ctl00_MainContent_tableData"))
-        )
-
-        # Step 6: Check how many rows are in the table body
-        if debug:
-            print("step 6")
-        rows = driver.find_elements(
             By.CSS_SELECTOR,
-            "#ctl00_MainContent_tableData tbody tr"
-        )
-        if len(rows) == 0:
-            print("No search results found.")
-            return
-        elif len(rows) > 1:
-            print("ALERT: More than one search result found.")
+            "[name='findByAddress']"
+        ).click()
+
+        # Step 4: check if search failed or needs push to results page
+        current_url = driver.current_url
+
+        if debug:
+            print("step 4: Current URL:", current_url)
+
+        # --- Case 2: Already on parcel detail page
+        if "parcelId=" in current_url:
+            if debug:
+                print("Detected parcel detail page")
         else:
-            print("exactly one result found")
 
-        # Step 7: Click the address cell to go to parcel page
-        if debug:
-            print("step 7")
-        address_cell = rows[0].find_elements(By.TAG_NAME, "td")[3]
-        address_cell.click()
+            # --- Case 1 or 3: Same base URL, so check contents
+            try:
+                # Look for results list
+                results = driver.find_elements(By.CSS_SELECTOR, "a.findByAddress")
+                if results:
+                    if debug:
+                        print(f"Detected results list with {len(results)} results, clicking first")
+                    results[0].click()
+                    # Wait for parcel page to load
+                    WebDriverWait(driver, 10).until(
+                        EC.url_contains("parcelId=")
+                    )
+                    if debug:
+                        print("arrived at results page")
 
-        # Step 8: Wait for detail page to load
-        if debug:
-            print("step 8")
-            print(driver.page_source[:1000])  # Print first 1000 characters for debugging
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((
-                By.ID, "ctl00_MainContent_OwnLeg_labOwnerName"
-            ))
-        )
+                # If no results, check if search box exists → failed search
+                if driver.find_elements(By.ID, "streetAddress"):
+                    if debug:
+                        print("Detected failed search (back to search form)")
+                    return "search failed"
+
+            except Exception as e:
+                if debug:
+                    print("Error detecting page type:", e)
 
         print("Successfully navigated to the parcel detail page.")
 
         # Optionally, extract something here (e.g., owner name)
-        owner = driver.find_element(By.ID, "ctl00_MainContent_OwnLeg_labOwnerName").text
+        parcel_id = driver.find_element(By.ID, "asrParcelId").text
         if debug:
-            print("Owner:", owner)
+            print("Parcel ID:", parcel_id)
 
     except Exception as e:
         print("Error occurred:", e)
@@ -138,16 +128,15 @@ def parse_property_details(html: str) -> dict:
     def get_text(selector):
         el = soup.select_one(selector)
         return el.get_text(strip=True) if el else None
-
+    def get_td_from_th(th):
+        th = soup.find("th", string=lambda t: t and t.strip() == th)
+        td = th.find_next_sibling("td").get_text(strip=True)
+        return td
+    
     return {
-        "owner_name": get_text("#ctl00_MainContent_OwnLeg_labOwnerName"),
-        "taxing_address": get_text("#ctl00_MainContent_OwnLeg_labTaxAddr"),
-        "care_of_name": get_text("#ctl00_MainContent_OwnLeg_labCareOfName"),
-        "mailing_address": get_text("#ctl00_MainContent_OwnLeg_labMailAddr"),
-        "legal_description": get_text("#ctl00_MainContent_OwnLeg_labLegalDesc"),
-        "total_acres": get_text("#ctl00_MainContent_OwnLeg_labAcres"),
-        "lot_dimensions": get_text("#ctl00_MainContent_OwnLeg_labLotDimensions"),
-        "land_use_code": get_text("#ctl00_MainContent_OwnLeg_labLandUseCode"),
+        "parcel_id": get_text("#asrParcelId"),
+        "zip_code": get_td_from_th("Zip code"),
+        "property_use": get_td_from_th("Property use")
     }
 
 
@@ -206,13 +195,16 @@ def query_property_and_write(iterator):
 
 
 def main():
-    i = 1
-    for i in range(17, 19):
-        query_property_and_write(i)
+    address = '5450 GENEVIEVE AV'
+    m = fetch_property_page_by_address(address, debug=False)
+    # print(m)
+    r = parse_property_details(m)
+    print(r)
 
 
 if __name__ == '__main__':
     startTime = datetime.now()
+    print('starting')
     # a = fetch_property_page_by_locator_number('20W340155')
     # b = parse_property_details(a)
     # print(b)
