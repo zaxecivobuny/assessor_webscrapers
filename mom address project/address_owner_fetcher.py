@@ -198,12 +198,14 @@ def main():
         'Walk': 'WALK',
         'Way': 'WAY'
     }
+    counter = 0
     with open('address_list_master_formatted.txt') as fi, open('output_data.csv', 'w') as fo:
         for line in fi:
+            counter += 1
             for attempt in range(3):
                 try:
                     address = line.rstrip()
-                    print(address)
+                    print(counter, address)
                     a = address.split(' ')
                     street_number = a[0]
                     street_name = ' '.join(a[1:-1])
@@ -239,6 +241,9 @@ def main():
                     break
 
 if __name__ == '__main__':
+    startTime = datetime.now()
+    print(startTime)
     main()
+    print(datetime.now() - startTime)
 
 driver.quit()

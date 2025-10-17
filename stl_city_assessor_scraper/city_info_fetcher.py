@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 from bs4 import BeautifulSoup
+import re
 
 # from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -90,9 +91,19 @@ def fetch_property_page_by_address(address, debug=False):
                     )
                     if debug:
                         print("arrived at results page")
+                        current_url = driver.current_url
+                        print("step 4: Current URL:", current_url)
 
-                # If no results, check if search box exists → failed search
-                if driver.find_elements(By.ID, "streetAddress"):
+
+                # If no results, element exists → failed search
+                # this is surprisingly tricky as the results page contains the search page
+                if driver.find_elements(
+                    By.ID,
+                    "basic"
+                ):
+                    # this ID exists on the results page and not on the search page
+                    pass
+                else:
                     if debug:
                         print("Detected failed search (back to search form)")
                     return "search failed"
@@ -133,19 +144,69 @@ def parse_property_details(html: str) -> dict:
         td = th.find_next_sibling("td").get_text(strip=True)
         return td
     
+    # step 1: get total owed from single location
+
+    td = soup.find("td", string=lambda t: t and "Total Amount Due For this Account:" in t)
+
+    if td:
+        match = re.search(r"\$[\d,]+\.\d{2}", td.get_text())
+        if match:
+            amount_due = match.group()
+    else:
+            amount_due = "Not Found"
+
+    
+    # step 2: get oldest tax year owed by iterating list
+    
+    oldest_tax_year_owed = 2025
+
+    tax_owed_table = None
+    
+    for t in soup.find_all("table", class_="data striped"):
+        caption = t.find("caption")
+        if caption and "Payment history for each of the most recent 3 years" in caption.get_text():
+            tax_owed_table = t
+            break
+
+    if not tax_owed_table:
+        print("Payment history table not found.")
+    
+    for row in tax_owed_table.tbody.find_all("tr"):
+        cells = row.find_all("td")
+
+        # Skip rows that don't have enough cells (e.g., summary row)
+        if len(cells) < 11:
+            continue
+
+        tax_year = cells[0].get_text(strip=True)
+        total_balance_text = cells[10].get_text(strip=True)
+
+        # Convert balance string like "$234.73" to float
+        try:
+            total_balance = float(total_balance_text.replace("$", "").replace(",", ""))
+        except ValueError:
+            print("error converting total tax balance:", total_balance_text)
+            continue
+
+        if total_balance > 0:
+            oldest_tax_year_owed = int(tax_year)
+
     return {
         "parcel_id": get_text("#asrParcelId"),
         "zip_code": get_td_from_th("Zip code"),
-        "property_use": get_td_from_th("Property use")
+        "property_use": get_td_from_th("Property use"),
+        "appraised_total": get_td_from_th("Appraised total"),
+        "city_taxes_due": amount_due,
+        "oldest_unpaid_tax_year": oldest_tax_year_owed
     }
 
 
-def query_property_and_write(iterator):
+def query_property_and_write():
     debug = False
     delimiter = '|'
     count = 1
-    input_file_name = 'data/locator_number_list_part_%d.txt' % iterator
-    output_file_name = 'data/locator_output_data_part_%d.csv' % iterator
+    input_file_name = 'data/city_address_list_sample.txt'
+    output_file_name = 'data/city_locator_output_data.csv'
     # input_file_name = 'locator_number_list.txt'
     # output_file_name = 'locator_output_data.csv'
     with open(input_file_name) as fi, open(output_file_name, 'w') as fo:
@@ -154,7 +215,7 @@ def query_property_and_write(iterator):
             #     return
             for attempt in range(3):
                 try:
-                    locator_number = line.rstrip()
+                    address = line.rstrip()
                     print(count, locator_number)
                     results_page = fetch_property_page_by_locator_number(
                         locator_number,
@@ -174,13 +235,17 @@ def query_property_and_write(iterator):
 
                     data_row = locator_number
                     data_row += delimiter
-                    data_row += results_details['total_acres']
+                    data_row += results_details['parcel_id']
                     data_row += delimiter
-                    data_row += results_details['lot_dimensions']
+                    data_row += results_details['zip_code']
                     data_row += delimiter
-                    data_row += results_details['land_use_code']
-                    # data_row += delimiter
-                    # data_row += tax_details['unpaid_tax_total']
+                    data_row += results_details['property_use']
+                    data_row += delimiter
+                    data_row += tax_details['appraised_total']
+                    data_row += delimiter
+                    data_row += tax_details['city_taxes_due']
+                    data_row += delimiter
+                    data_row += tax_details['oldest_unpaid_tax_year']
                     data_row += '\n'
                     fo.write(data_row)
                 except Exception as e:
@@ -194,9 +259,12 @@ def query_property_and_write(iterator):
             count += 1
 
 
+
+
 def main():
     address = '5450 GENEVIEVE AV'
-    m = fetch_property_page_by_address(address, debug=False)
+    # address = '4213 W MARTIN LUTHER KING DR'
+    m = fetch_property_page_by_address(address, debug=True)
     # print(m)
     r = parse_property_details(m)
     print(r)
