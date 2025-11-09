@@ -170,6 +170,7 @@ def parse_property_details(html: str) -> dict:
 
     if not tax_owed_table:
         print("Payment history table not found.")
+        return {}
     
     for row in tax_owed_table.tbody.find_all("tr"):
         cells = row.find_all("td")
@@ -189,7 +190,7 @@ def parse_property_details(html: str) -> dict:
             continue
 
         if total_balance > 0:
-            oldest_tax_year_owed = int(tax_year)
+            oldest_tax_year_owed = tax_year
 
     return {
         "parcel_id": get_text("#asrParcelId"),
@@ -216,36 +217,31 @@ def query_property_and_write():
             for attempt in range(3):
                 try:
                     address = line.rstrip()
-                    print(count, locator_number)
-                    results_page = fetch_property_page_by_locator_number(
-                        locator_number,
+                    print(count, address)
+                    results_page = fetch_property_page_by_address(
+                        address,
                         debug
                     )
                     results_details = parse_property_details(results_page)
                     if debug:
                         print(results_details)
 
-                    # tax_results_page = fetch_tax_page_by_locator_number(
-                    #     locator_number,
-                    #     debug=debug
-                    # )
-                    # tax_details = parse_tax_details_page(tax_results_page)
-                    # if debug:
-                    #     print(tax_details)
-
-                    data_row = locator_number
+                    data_row = address
                     data_row += delimiter
-                    data_row += results_details['parcel_id']
-                    data_row += delimiter
-                    data_row += results_details['zip_code']
-                    data_row += delimiter
-                    data_row += results_details['property_use']
-                    data_row += delimiter
-                    data_row += tax_details['appraised_total']
-                    data_row += delimiter
-                    data_row += tax_details['city_taxes_due']
-                    data_row += delimiter
-                    data_row += tax_details['oldest_unpaid_tax_year']
+                    if results_details == {}:
+                        data_row += "error accessing"
+                    else:
+                        data_row += results_details['parcel_id']
+                        data_row += delimiter
+                        data_row += results_details['zip_code']
+                        data_row += delimiter
+                        data_row += results_details['property_use']
+                        data_row += delimiter
+                        data_row += results_details['appraised_total']
+                        data_row += delimiter
+                        data_row += results_details['city_taxes_due']
+                        data_row += delimiter
+                        data_row += results_details['oldest_unpaid_tax_year']
                     data_row += '\n'
                     fo.write(data_row)
                 except Exception as e:
@@ -262,13 +258,14 @@ def query_property_and_write():
 
 
 def main():
-    address = '5450 GENEVIEVE AV'
-    # address = '4213 W MARTIN LUTHER KING DR'
-    m = fetch_property_page_by_address(address, debug=True)
-    # print(m)
-    r = parse_property_details(m)
-    print(r)
-
+    # address = '5450 GENEVIEVE AV'
+    # address = '5 GENEVIEVE AV'
+    # # address = '4213 W MARTIN LUTHER KING DR'
+    # m = fetch_property_page_by_address(address, debug=True)
+    # # print(m)
+    # r = parse_property_details(m)
+    # print(r)
+    query_property_and_write()
 
 if __name__ == '__main__':
     startTime = datetime.now()
