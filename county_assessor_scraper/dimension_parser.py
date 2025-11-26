@@ -7,20 +7,20 @@ def parse_dimension_string(s):
     elif 'IRR' in s:
         return 'IRR'
     # case 1, two numbers
-    elif re.search('^\s*\d{4}\s*/\s*-\s*\d{4}\s*/\s*$', s):
-        n = re.findall('\d{4}', s)
+    elif re.search(r'^\s*\d{4}\s*/\s*-\s*\d{4}\s*/\s*$', s):
+        n = re.findall(r'\d{4}', s)
         return int(n[0]) * int(n[1])
     # case 2, n / n - n
-    elif re.search('^\s*\d{4}\s*/\s*\d{4}\s*-\s*\d{4}\s*/\s*$', s):
-        n = re.findall('\d{4}', s)
+    elif re.search(r'^\s*\d{4}\s*/\s*\d{4}\s*-\s*\d{4}\s*/\s*$', s):
+        n = re.findall(r'\d{4}', s)
         return ((int(n[0]) + int(n[1])) / 2) * int(n[2])
     # case 3, n-n/n
-    elif re.search('^\s*\d{4}\s*/\s*-\s*\d{4}\s*/\s*\d{4}\s*$', s):
-        n = re.findall('\d{4}', s)
+    elif re.search(r'^\s*\d{4}\s*/\s*-\s*\d{4}\s*/\s*\d{4}\s*$', s):
+        n = re.findall(r'\d{4}', s)
         return int(n[0]) * ((int(n[1]) + int(n[2])) / 2)
     # case 4, n/n-n/n
-    elif re.search('^\s*\d{4}\s*/\s*\d{4}\s*-\s*\d{4}\s*/\s*\d{4}\s*$', s):
-        n = re.findall('\d{4}', s)
+    elif re.search(r'^\s*\d{4}\s*/\s*\d{4}\s*-\s*\d{4}\s*/\s*\d{4}\s*$', s):
+        n = re.findall(r'\d{4}', s)
         return ((int(n[0]) + int(n[1])) / 2) * ((int(n[2]) + int(n[3])) / 2)
     else:
         return 'unknown case'

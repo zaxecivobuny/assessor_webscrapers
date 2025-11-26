@@ -10,6 +10,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from datetime import datetime
+import re
 
 
 options = webdriver.ChromeOptions()
@@ -139,6 +140,7 @@ def parse_property_details(html: str) -> dict:
         el = soup.select_one(selector)
         return el.get_text(strip=True) if el else None
 
+    appraised_total_selector = "#asmt-year-2025 > tbody:nth-child(2) > tr:nth-child(1) > td:nth-child(4)"
     return {
         "owner_name": get_text("#ctl00_MainContent_OwnLeg_labOwnerName"),
         "taxing_address": get_text("#ctl00_MainContent_OwnLeg_labTaxAddr"),
@@ -148,15 +150,46 @@ def parse_property_details(html: str) -> dict:
         "total_acres": get_text("#ctl00_MainContent_OwnLeg_labAcres"),
         "lot_dimensions": get_text("#ctl00_MainContent_OwnLeg_labLotDimensions"),
         "land_use_code": get_text("#ctl00_MainContent_OwnLeg_labLandUseCode"),
+        "latest_appraised_total": get_text(appraised_total_selector),
     }
 
+
+def parse_dimension_string(s):
+
+    if len(s) < 4:
+        return 'blank'
+    elif 'IRR' in s:
+        return 'IRR'
+    # case 1, two numbers
+    elif re.search(r'^\s*\d{4}\s*/\s*-\s*\d{4}\s*/\s*$', s):
+        n = re.findall(r'\d{4}', s)
+        return int(n[0]) * int(n[1])
+    # case 2, n / n - n
+    elif re.search(r'^\s*\d{4}\s*/\s*\d{4}\s*-\s*\d{4}\s*/\s*$', s):
+        n = re.findall(r'\d{4}', s)
+        return ((int(n[0]) + int(n[1])) / 2) * int(n[2])
+    # case 3, n-n/n
+    elif re.search(r'^\s*\d{4}\s*/\s*-\s*\d{4}\s*/\s*\d{4}\s*$', s):
+        n = re.findall(r'\d{4}', s)
+        return int(n[0]) * ((int(n[1]) + int(n[2])) / 2)
+    # case 4, n/n-n/n
+    elif re.search(r'^\s*\d{4}\s*/\s*\d{4}\s*-\s*\d{4}\s*/\s*\d{4}\s*$', s):
+        n = re.findall(r'\d{4}', s)
+        return ((int(n[0]) + int(n[1])) / 2) * ((int(n[2]) + int(n[3])) / 2)
+    else:
+        return 'unknown case'
 
 def query_property_and_write(iterator):
     debug = False
     delimiter = '|'
     count = 1
-    input_file_name = 'data/locator_number_list_part_%d.txt' % iterator
-    output_file_name = 'data/locator_output_data_part_%d.csv' % iterator
+    if iterator == -1:
+        input_file_name = 'data/locator_number_list_sample.txt'
+        output_file_name = 'data/locator_output_data_sample.csv'
+    else:
+        input_file_name = 'data/locator_number_list_part_%d.txt' % iterator
+        output_file_name = 'data/locator_output_data_part_%d.csv' % iterator
+
     # input_file_name = 'locator_number_list.txt'
     # output_file_name = 'locator_output_data.csv'
     with open(input_file_name) as fi, open(output_file_name, 'w') as fo:
@@ -175,21 +208,20 @@ def query_property_and_write(iterator):
                     if debug:
                         print(results_details)
 
-                    # tax_results_page = fetch_tax_page_by_locator_number(
-                    #     locator_number,
-                    #     debug=debug
-                    # )
-                    # tax_details = parse_tax_details_page(tax_results_page)
-                    # if debug:
-                    #     print(tax_details)
-
                     data_row = locator_number
+                    data_row += delimiter
+                    data_row += results_details['taxing_address']
                     data_row += delimiter
                     data_row += results_details['total_acres']
                     data_row += delimiter
                     data_row += results_details['lot_dimensions']
                     data_row += delimiter
+                    data_row += str(
+                        parse_dimension_string(results_details['lot_dimensions']))
+                    data_row += delimiter
                     data_row += results_details['land_use_code']
+                    data_row += delimiter
+                    data_row += results_details['latest_appraised_total']
                     # data_row += delimiter
                     # data_row += tax_details['unpaid_tax_total']
                     data_row += '\n'
@@ -207,9 +239,9 @@ def query_property_and_write(iterator):
 
 def main():
     i = 1
-    for i in range(17, 19):
-        query_property_and_write(i)
-
+    # for i in range(17, 19):
+    #     query_property_and_write(i)
+    query_property_and_write(-1)
 
 if __name__ == '__main__':
     startTime = datetime.now()

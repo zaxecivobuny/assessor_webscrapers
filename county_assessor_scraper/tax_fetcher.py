@@ -3,7 +3,14 @@ from bs4 import BeautifulSoup
 
 from datetime import datetime
 
-from urllib.request import urlopen
+# from urllib.request import urlopen
+
+import urllib.request 
+
+from urllib import request
+
+class AppURLopener(urllib.request.FancyURLopener):
+    version = 'Mozilla/5.0'
 
 
 def fetch_tax_page_by_locator_number_requests(locator_number, tax_year='2024', debug=False):
@@ -16,7 +23,21 @@ def fetch_tax_page_by_locator_number_requests(locator_number, tax_year='2024', d
         # Step 1: Go to the form page
         if debug:
             print("step 1")
-        page = urlopen(url)
+
+        headers={
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+            'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+            'Accept-Encoding': 'none',
+            'Accept-Language': 'en-US,en;q=0.8',
+            'Connection': 'keep-alive',
+            'referer': 'https://example.com',
+            # 'cookie': """your cookie value ( you can get that from your web page) """
+        }
+
+        req = request.Request(url, headers=headers) 
+        page = request.urlopen( req )
+
         html_bytes = page.read()
         html = html_bytes.decode("utf-8")
 
@@ -27,6 +48,7 @@ def fetch_tax_page_by_locator_number_requests(locator_number, tax_year='2024', d
 
     except Exception as e:
         print("Error occurred:", e)
+        # print(e.fp.read())
 
     finally:
         if debug:
@@ -65,15 +87,35 @@ def parse_tax_details_page(html: str) -> dict:
         "last_year_paid": target_a_inner_html,
     }
 
+def parse_last_tax_year(html: str) -> str:
+    # parse tax HTML to extract just the last tax bill
+
+    soup = BeautifulSoup(html, "html.parser")
+
+    billing = soup.select_one("#Billing1")
+    print("billing", billing.get_text())
+
+    selector = "#Billing1 > div:nth-child(2) > div:nth-child(2) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(2)"
+
+    el = soup.select_one(selector)
+    return el.get_text(strip=True) if el else None
+
+
 
 def query_and_write(iterator):
     debug = False
     delimiter = '|'
     count = 1
-    # input_file_name = 'locator_number_list_part_%d.txt' % iterator
-    # output_file_name = 'tax_output_data_part_%d.csv' % iterator
-    input_file_name = 'data/locator_number_list.txt'
-    output_file_name = 'data/tax_output_data_rich.csv'
+    if iterator == -1:
+        input_file_name = 'data/locator_number_list_sample.txt'
+        output_file_name = 'data/tax_output_data_rich_sample.csv'
+    elif iterator == 0:
+        input_file_name = 'data/locator_number_list.txt'
+        output_file_name = 'data/tax_output_data_rich.csv'       
+    else:
+        input_file_name = 'data/locator_number_list_part_%d.txt' % iterator
+        output_file_name = 'data/tax_output_data_rich_part_%d.csv' % iterator
+
     with open(input_file_name) as fi, open(output_file_name, 'w') as fo:
         for line in fi:
             # if count > 200:
@@ -107,6 +149,7 @@ def query_and_write(iterator):
                 else:
                     break
             count += 1
+            return
 
 
 def main():
@@ -115,7 +158,15 @@ def main():
     count = 1
     # for i in range(9, 25):
         # print(i)
-    query_and_write(0)
+    # query_and_write(-1)
+
+    locator_number = '11G330915'
+    locator_number = '19U410063'
+    year = '2024'
+    page = fetch_tax_page_by_locator_number_requests(locator_number, year)
+    taxes = parse_last_tax_year(page)
+    print("got value:", taxes)
+
 
 
 if __name__ == '__main__':
