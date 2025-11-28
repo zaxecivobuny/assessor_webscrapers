@@ -25,10 +25,10 @@ driver = webdriver.Chrome(service=service, options=options)
 def reset_connection():
     global service
     global driver 
-    global options 
+    global options
+    print("resetting connection") 
+    driver.quit()
     driver = webdriver.Chrome(service=service, options=options)
-
-
 
 
 # Define your input
@@ -140,10 +140,38 @@ def parse_property_details(html: str) -> dict:
         el = soup.select_one(selector)
         return el.get_text(strip=True) if el else None
 
+    def get_text_address(selector):
+        el = soup.select_one(selector)
+        if el:
+            br = el.find('br')
+
+            # Text before the <br>
+            addr_line1 = br.previous_sibling.strip() if br and br.previous_sibling else ""
+
+            # Text after the <br>
+            addr_line2 = br.next_sibling.strip() if br and br.next_sibling else ""
+            # print("a1", addr_line1)
+            # print("a2", addr_line2)
+            zip_code = addr_line2.split(',')[1][4:]
+            # print("zip_code:"+zip_code)
+            return [addr_line1, zip_code]
+
+        else:
+            return None
+
+    address_list = get_text_address("#ctl00_MainContent_OwnLeg_labTaxAddr")
+    if len(address_list) > 1:
+        taxing_address_line_1 = address_list[0]
+        taxing_address_zip = address_list[1]
+    else:
+        taxing_address_line_1 = 'unknown'
+        taxing_address_zip = 'unknown'
+
     appraised_total_selector = "#asmt-year-2025 > tbody:nth-child(2) > tr:nth-child(1) > td:nth-child(4)"
     return {
         "owner_name": get_text("#ctl00_MainContent_OwnLeg_labOwnerName"),
-        "taxing_address": get_text("#ctl00_MainContent_OwnLeg_labTaxAddr"),
+        "taxing_address": taxing_address_line_1,
+        "taxing_zip": taxing_address_zip,
         "care_of_name": get_text("#ctl00_MainContent_OwnLeg_labCareOfName"),
         "mailing_address": get_text("#ctl00_MainContent_OwnLeg_labMailAddr"),
         "legal_description": get_text("#ctl00_MainContent_OwnLeg_labLegalDesc"),
@@ -179,6 +207,7 @@ def parse_dimension_string(s):
     else:
         return 'unknown case'
 
+
 def query_property_and_write(iterator):
     debug = False
     delimiter = '|'
@@ -186,6 +215,9 @@ def query_property_and_write(iterator):
     if iterator == -1:
         input_file_name = 'data/locator_number_list_sample.txt'
         output_file_name = 'data/locator_output_data_sample.csv'
+    if iterator == 0:
+        input_file_name = 'data/locator_number_list.txt'
+        output_file_name = 'data/locator_output_data.csv'
     else:
         input_file_name = 'data/locator_number_list_part_%d.txt' % iterator
         output_file_name = 'data/locator_output_data_part_%d.csv' % iterator
@@ -196,9 +228,10 @@ def query_property_and_write(iterator):
         for line in fi:
             # if count > 200:
             #     return
+            locator_number = line.rstrip()
+            data_row = locator_number
             for attempt in range(3):
                 try:
-                    locator_number = line.rstrip()
                     print(count, locator_number)
                     results_page = fetch_property_page_by_locator_number(
                         locator_number,
@@ -211,6 +244,8 @@ def query_property_and_write(iterator):
                     data_row = locator_number
                     data_row += delimiter
                     data_row += results_details['taxing_address']
+                    data_row += delimiter
+                    data_row += results_details['taxing_zip']
                     data_row += delimiter
                     data_row += results_details['total_acres']
                     data_row += delimiter
@@ -226,6 +261,7 @@ def query_property_and_write(iterator):
                     # data_row += tax_details['unpaid_tax_total']
                     data_row += '\n'
                     fo.write(data_row)
+                    data_row = ""
                 except Exception as e:
                     print("error on attempt", attempt)
                     print(e)
@@ -234,6 +270,7 @@ def query_property_and_write(iterator):
                     continue
                 else:
                     break
+            fo.write(data_row)
             count += 1
 
 
@@ -241,7 +278,7 @@ def main():
     i = 1
     # for i in range(17, 19):
     #     query_property_and_write(i)
-    query_property_and_write(-1)
+    query_property_and_write(0)
 
 if __name__ == '__main__':
     startTime = datetime.now()

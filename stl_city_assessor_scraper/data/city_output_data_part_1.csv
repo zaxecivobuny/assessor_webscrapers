@@ -38,7 +38,7 @@
 5861 PAGE BLVD|3823-9-215.000|63112|Single Family Units|$9,249.00|$373.65|2024
 5431 RUSKIN AV|5080-9-330.000|63115|Single Family Units|$7,795.00|$522.57|2023
 4215 CLAY AV|4896-9-200.000|63115|Single Family Units|$5,649.00|$116.41|2025
-5729 TERRY AV|5243-9-700.000|63120|Single Family Units|$7,795.00|$522.57|2023
+5729 TERRY AV|error accessing
 5922 HAMILTON TER|3834-9-425.000|63112|Single Family Units|$8,925.00|$574.28|2023
 1134 NEWHOUSE AV|2410-9-090.000|63107|Single Family Units|$5,480.00|$396.24|2023
 5046 RUSKIN AV|5740-9-150.000|63115|Single Family Units|$15,022.00|$573.19|2024
@@ -114,7 +114,7 @@
 2724 PRAIRIE AV|2384-9-380.000|63113|Two Family Unit|$6,951.00|$477.96|2023
 5268 WREN AV|5121-9-200.000|63120|Single Family Units|$13,146.00|$812.29|2023
 5333 N KINGSHIGHWAY BLVD|5140-9-410.000|63115|Single Family Units|$22,950.00|$841.69|2024
-4225 LEXINGTON AV|4441-9-475.001|63115|Condominium - 6 Units Or Less Per Bldg|$14,000.00|$516.00|2024
+4225 LEXINGTON AV|error accessing
 4225 LEXINGTON AV|4441-9-475.001|63115|Condominium - 6 Units Or Less Per Bldg|$14,000.00|$516.00|2024
 5969 MCARTHUR AV|5723-9-050.000|63120|Single Family Units|$21,010.00|$354.61|2025
 4175 FARLIN AV|4435-9-240.000|63115|Two Family Unit|$10,097.00|$649.02|2023
@@ -127,7 +127,7 @@
 5741 ST LOUIS AV|5237-9-640.000|63120|Single Family Units|$13,830.00|$850.21|2023
 3525 N TAYLOR AV|4448-9-340.000|63115|Single Family Units|$14,268.00|$546.89|2024
 4303 COLLEGE AV|3397-9-390.000|63107|Vacant Residential Lot|$7,869.00|$497.48|2023
-4114 W CARTER AV|4895-9-070.000|63115|Single Family Units|$14,398.00|$551.36|2024
+4114 W CARTER AV|error accessing
 4914 LEAHY AV|5468-9-440.000|63115|Single Family Units|$14,024.00|$246.57|2025
 6128 SHERRY AV|5492-9-160.000|63136|Single Family Units|$9,450.00|$337.93|2024
 4261 W PAGE BLVD|3729-9-760.000||Vacant Residential Lot|$3,000.00|$167.01|2023
@@ -156,6 +156,7 @@
 5380 GERALDINE AV|5085-9-270.000|63115|Single Family Units|$6,734.00|$132.77|2025
 4202 N EUCLID AV|4390-9-575.000|63115|Two Family Unit|$15,660.00|$595.10|2024
 916 CLARENDON AV|4842-9-580.000|63108|Commercial|$5,800.00|$185.30|2025
+3519 PALM ST|5216-9-170.000|63107|Commercial|$8,308.00|Not Found|2025
 4770 LEDUC ST|3780-9-140.000|63113|Vacant Residential Lot|$1,300.00|$73.58|2023
 4557 ARLINGTON AV|5562-9-240.000|63120|Single Family Units|$7,957.00|$531.43|2023
 5723 TERRY AV|5243-9-680.000|63120|Single Family Units|$8,101.00|$154.05|2025
@@ -163,9 +164,9 @@
 5619 TERRY AVE|5243-9-460.000|63120|Single Family Units|$9,492.00|$613.96|2023
 1119 GOODFELLOW BLVD|3827-9-145.000|63112|Multi-Family Residential|$19,800.00|$535.74|2024
 1435 PENDLETON AV|3727-9-185.000|63113|Commercial|$7,600.00|$840.79|2023
-4227 LEXINGTON AV|4441-9-475.001|63115|Condominium - 6 Units Or Less Per Bldg|$14,000.00|$516.00|2024
+4227 LEXINGTON AV|error accessing
 1482 STEWART PL|3804-9-330.000|63112|Single Family Units|$10,975.00|$686.11|2023
-5236 MAFFITT AV|4503-9-060.000|63113|Single Family Units|$6,492.00|$283.90|2024
+5236 MAFFITT AV|error accessing
 5015 ARLINGTON AV|5556-9-640.000|63120|Single Family Units|$10,498.00|$190.45|2025
 703 BADEN AVE|4257-9-110.000|63147|Four Family Unit|$16,533.00|$997.05|2023
 5505 ERA AV|5788-9-450.000|63136|Single Family Units|$16,219.00|$613.35|2024
@@ -179,9 +180,9 @@
 717 THRUSH AV|5227-9-180.000|63147|Single Family Units|$10,455.00|$417.61|2024
 2504 GROVER ST|4516-9-010.000|63112|Single Family Units|$10,079.00|$404.06|2024
 3125 N TAYLOR AV|4462-9-400.000|63115|Two Family Unit|$17,496.00|$1,049.64|2023
-2905 N TAYLOR AV|3711-9-290.000|63115|Two Family Unit|$15,484.00|$938.59|2023
+2905 N TAYLOR AV|error accessing
 5932 LUCILLE AV|5357-9-090.000|63136|Single Family Units|$13,665.00|$838.62|2023
-5319 NORTHLAND AV|4517-9-515.000|63112|Single Family Units|$8,220.00|$341.27|2024
+5319 NORTHLAND AV|error accessing
 5636 ACME AV|5457-9-110.000|63136|Single Family Units|$12,587.00|$491.40|2024
 1321 TEMPLE PL|3816-9-110.000|63112|Single Family Units|$8,327.00|$340.89|2024
 4859 BESSIE AV|4390-9-785.000|63115|Single Family Units|$16,072.00|$278.52|2025
@@ -197,288 +198,3 @@
 5359 COTE BRILLIANTE AV|4514-9-430.000|63112|Two Family Unit|$7,934.00|$331.14|2024
 5348 CABANNE AV|3865-9-080.000|63112|Vacant Residential Lot|$7,500.00|$418.30|2023
 4133 N TAYLOR AV|5670-9-160.000|63115|Single Family Units|$15,136.00|$921.11|2023
-5305 ARLINGTON AV|5330-9-540.000|63120|Single Family Units|$11,360.00|$447.65|2024
-4326 PENROSE ST|3573-9-560.000|63115|Single Family Units|$12,638.00|$492.24|2024
-927 N SARAH ST|4873-9-240.000|63108|Commercial|$6,300.00|$321.28|2025
-6045 EMMA AV|5344-9-390.000|63136|Single Family Units|$13,100.00|$507.83|2024
-5346 WELLS AV|3798-9-160.000|63112|Two Family Unit|$16,215.00|$980.34|2023
-5225 DAVISON AV|5532-9-420.000|63120|Single Family Units|$9,268.00|$376.71|2024
-930 CANAAN AV|5276-9-140.000|63147|Single Family Units|$16,383.00|$617.85|2024
-3941 N MARKET ST|3641-9-340.000|63113|Single Family Units|$9,445.00|$611.11|2023
-4064 ST LOUIS AV|3650-9-020.000|63107|Commercial|$8,200.00|$912.16|2024
-6052 THEKLA AV|5347-9-080.000|63136|Single Family Units|$17,666.00|$1,057.22|2023
-4255 LEXINGTON AV|4441-9-455.000|63115|Single Family Units|$14,636.00|$558.64|2024
-4246 LABADIE AV|3672-9-130.000|63115|Two Family Unit|$13,102.00|$809.32|2023
-3948 GREER AV|3647-9-070.000|63107|Two Family Unit|$17,763.00|$1,060.85|2023
-5204 ST LOUIS AV|4499-9-035.000|63115|Single Family Units|$7,759.00|$522.57|2023
-4265 FARLIN AV|4436-9-230.000|63115|Single Family Units|$5,805.00|$416.60|2023
-1713 ANNIE MALONE DR|3683-9-250.000|63113|Single Family Units|$11,940.00|$213.82|2025
-4947 THEODORE AV|error accessing
-6048 LUCILLE AV|error accessing
-5941 JULIAN AV|error accessing
-4855 BESSIE AV|error accessing
-5055 LOTUS AV|error accessing
-5700 ACME AV|error accessing
-1320 BLACKSTONE AV|error accessing
-4217 DARBY|error accessing
-3870 PAGE BLVD|error accessing
-9005 GOODFELLOW BLVD|error accessing
-4928 HOOKE AV|error accessing
-3010 BAILEY AV|error accessing
-5820 W FLORISSANT AV|error accessing
-3112 N NEWSTEAD AV|error accessing
-3949 N 21ST ST|error accessing
-6018 HARNEY AV|error accessing
-2606 BURD AV|error accessing
-4623 NEWBERRY TER|error accessing
-5116 WELLS AV|error accessing
-4870 ANDERSON AV|error accessing
-8607 N BROADWAY ST|error accessing
-1317 TEMPLE PL|error accessing
-3532 ROGER PL|error accessing
-4630 MARGARETTA AV|error accessing
-5900 PLYMOUTH AV|error accessing
-4604 CARTER AV|error accessing
-1406 GRANVILLE PL|error accessing
-9151 NEWBY ST|error accessing
-3309 UNION BLVD|error accessing
-4650 ST FERDINAND AV|error accessing
-5472 CLAXTON AV|error accessing
-5706 KENNERLY AV|error accessing
-9722 E LOOKOUT CT|error accessing
-1911 BELLE GLADE AV|error accessing
-5987 HAMILTON TER|error accessing
-2806 UNION BLVD|error accessing
-8555 RIVERVIEW BLVD|error accessing
-4145 WASHINGTON AV|error accessing
-5062 EMERSON AV|error accessing
-5942 NATURAL BRIDGE AV|error accessing
-4040 ENRIGHT AV|error accessing
-824 HARLAN AV|error accessing
-5033 KENSINGTON AV|error accessing
-5440 RUSKIN AV|error accessing
-705 DODDRIDGE ST|error accessing
-5414 PARTRIDGE AV|error accessing
-4051 SHREVE AV|error accessing
-4701 ST LOUIS AV|error accessing
-8915 NEWBY ST|error accessing
-5043 RIVERVIEW BLVD|error accessing
-5044 MAFFITT AV|error accessing
-4273 MARTIN LUTHER KING DR|error accessing
-905 ELIAS AV|error accessing
-4139 DELMAR BLVD|error accessing
-5139 TERRY AV|error accessing
-3853 MAFFITT AV|error accessing
-5565 ERA AV|error accessing
-6153 LILLIAN AV|error accessing
-8531 PARK LA|error accessing
-1337 TEMPLE PL|error accessing
-5951 ROMAINE PL|error accessing
-5223 WABADA AV|error accessing
-4641 ALDINE AV|error accessing
-4936 ST LOUIS AV|error accessing
-4418 STRODTMAN PL|error accessing
-4729 MINNESOTA AV|error accessing
-3616 N NEWSTEAD AV|error accessing
-5838 MCARTHUR AV|error accessing
-729 BITTNER ST|error accessing
-4531 GENEVIEVE AV|error accessing
-5343 LABADIE AV|error accessing
-5927 SHERRY AV|error accessing
-4019 DRYDEN AV|error accessing
-2418 N EUCLID AV|error accessing
-4163 PECK ST|error accessing
-5600 NATURAL BRIDGE AV|error accessing
-2101 E GANO AV|error accessing
-4000 SULLIVAN AV|error accessing
-4434 CARTER AV|error accessing
-4463 SAN FRANCISCO AV|error accessing
-5938 KENNERLY AV|error accessing
-1957 BELT AV|error accessing
-5657 HIGHLAND AV|error accessing
-4556 DURANT AV|error accessing
-4957 LEAHY AV|error accessing
-5860 SALOMA AV|error accessing
-1706 ANNIE MALONE DR|error accessing
-8838 JORDAN ST|error accessing
-5725 TERRY AV|error accessing
-5267 DAVISON AV|error accessing
-8943 ANNETTA ST|error accessing
-3728 PALM ST|error accessing
-4449 ALDINE AV|error accessing
-5423 WREN AV|error accessing
-890 RIVERVIEW BLVD|error accessing
-4470 NATURAL BRIDGE AV|error accessing
-4744 NEWBERRY TER|error accessing
-4829 FOUNTAIN AV|error accessing
-4433 FARLIN AV|error accessing
-4559 LEXINGTON AV|error accessing
-4459 MARGARETTA AV|error accessing
-5173 KENSINGTON AV|error accessing
-8115 REILLY AV|error accessing
-5874 HIGHLAND AV|error accessing
-5032 CABANNE AV|error accessing
-4130 N TAYLOR AV|error accessing
-4338 WEST BELLE PL|error accessing
-5742 TERRY AV|error accessing
-5441 ARLINGTON AV|error accessing
-637 CHAIN OF ROCKS DR|error accessing
-4628 LABADIE AV|error accessing
-5322 ZEALAND ST|error accessing
-4347 COTE BRILLIANTE AV|error accessing
-4718 ST LOUIS AV|error accessing
-1330 WALTON AV|error accessing
-5073 BEACON AV|error accessing
-4239 W ASHLAND AV|error accessing
-2600 GOODFELLOW BLVD|error accessing
-1388 GOODFELLOW BLVD|error accessing
-4536 ASHLAND AV|error accessing
-1012 HORNSBY AV|error accessing
-5355 QUEENS AV|error accessing
-4817 LEDUC ST|error accessing
-4160 ALDINE AV|error accessing
-5534 WREN AV|error accessing
-1245 GIMBLIN ST|error accessing
-4228 W COTE BRILLIANTE AV|error accessing
-5541 ORIOLE ST|error accessing
-716 BITTNER ST|error accessing
-2818 TEXAS AV|error accessing
-5244 ASHLAND AV|error accessing
-5528 WREN AV|error accessing
-1217 MC LARAN AV|error accessing
-4940 SAN FRANCISCO AV|error accessing
-1071 RIVERVIEW BLVD|error accessing
-5945 ETZEL AV|error accessing
-4268 CLARENCE AV|error accessing
-8547 ORIOLE ST|error accessing
-4711 GOODFELLOW BLVD|error accessing
-781 BAYARD AV|error accessing
-5221 MAFFITT AV|error accessing
-4462 BESSIE AV|error accessing
-6036 THEKLA AV|error accessing
-843 DESOTO AV|error accessing
-4552 ALICE AV|error accessing
-4413 N MARKET ST|error accessing
-875 GUSTAV AV|error accessing
-5665 LABADIE AV|error accessing
-1142 HOWELL ST|error accessing
-5427 GENEVIEVE AV|error accessing
-3928 PENROSE ST|error accessing
-5527 PLOVER AV|error accessing
-4116 ASHLAND AV|error accessing
-1405 SWITZER AV|error accessing
-4843 SACRAMENTO AV|error accessing
-4801 LABADIE AV|error accessing
-2900 N EUCLID AV|error accessing
-1827 GEYER AV|error accessing
-5428 BARTMER AV|error accessing
-3872 PAGE BLVD|error accessing
-2728 OSCEOLA ST|error accessing
-2536 SEMPLE AV|error accessing
-4745 HAMMETT PL|error accessing
-3131 LEOLA AV|error accessing
-3135 LEOLA AV|error accessing
-6316 LAURA AV|error accessing
-5722 MAFFITT AV|error accessing
-4544 QUEENS AV|error accessing
-4744 NORTHLAND AV|error accessing
-4727 WREN AV|error accessing
-4741 LEE AV|error accessing
-5829 WABADA AV|error accessing
-4035 KENNERLY AV|error accessing
-5046 NORTHLAND AV|error accessing
-5021 CLAXTON AV|error accessing
-5056 CLAXTON AV|error accessing
-5060 CABANNE AV|error accessing
-5317 VON PHUL ST|error accessing
-3874 PAGE BLVD|error accessing
-5861 ROMAINE PL|error accessing
-8207 N BROADWAY|error accessing
-5128 LABADIE AV|error accessing
-3755 SHREVE AV|error accessing
-4917 ALCOTT AV|error accessing
-1157 AUBERT AV|error accessing
-4459 DEWEY AV|error accessing
-1408 CORA AV|error accessing
-1433 ROWAN AV|error accessing
-9124 JORDAN ST|error accessing
-2814 MARCUS AV|error accessing
-5032 DURANT AV|error accessing
-8509 MORA LA|error accessing
-3006 GOODFELLOW BLVD|error accessing
-4142 PENROSE ST|error accessing
-2217 ALBERTA ST|error accessing
-5742 AMELIA AV|error accessing
-6010 LUCILLE AV|error accessing
-1123 NEWHOUSE AV|error accessing
-4124 N TAYLOR AV|error accessing
-5711 GOODFELLOW BLVD|error accessing
-6310 PENNSYLVANIA AV|error accessing
-5960 VIVIAN PL|error accessing
-1284 HODIAMONT AV|error accessing
-5201 MAFFITT AV|error accessing
-5529 ERA AV|error accessing
-8525 MORA LA|error accessing
-4306 FARLIN AV|error accessing
-4735 R PAGE BLVD|error accessing
-5946 LAURA AV|error accessing
-5258 NORTHLAND AV|error accessing
-7509 VERMONT AV|error accessing
-1249 N EUCLID AV|error accessing
-3129 FAIR AV|error accessing
-5820 RIDGE AV|error accessing
-2738 SEMPLE AV|error accessing
-933 BADEN AV|error accessing
-4760 MARTIN LUTHER KING DR|error accessing
-5968 HAMILTON TER|error accessing
-5242 LEXINGTON AV|error accessing
-4891 PENROSE ST|error accessing
-5517 GENEVIEVE AV|error accessing
-5535 GENEVIEVE AV|error accessing
-5087 DURANT AV|error accessing
-1419 JOHN AV|error accessing
-6329 LAURA AV|error accessing
-2632 N EUCLID AV|error accessing
-4945 MAFFITT PL|error accessing
-5051 BEACON AV|error accessing
-4153 ST LOUIS AV|error accessing
-2424 N TAYLOR AV|error accessing
-3623 N NEWSTEAD AV|error accessing
-4245 PENROSE ST|error accessing
-5150 LOTUS AV|error accessing
-5214 THEODOSIA AV|error accessing
-4732 R NEWCOMB PL|error accessing
-5847 HIGHLAND AV|error accessing
-4154 SHREVE AV|error accessing
-4921 GENEVIEVE AV|error accessing
-4527 EVANS AV|error accessing
-1946 E WARNE AV|error accessing
-4011 PALM ST|error accessing
-4466 N TAYLOR AV|error accessing
-3034 N NEWSTEAD AV|error accessing
-5824 HIGHLAND AV|error accessing
-4425 HOLLY AV|error accessing
-3921 KENNERLY AV|error accessing
-5980 WABADA AV|error accessing
-5519 FLOY AV|5787-9-400.000|63115|Single Family Units|$16,988.00|$639.69|2024
-4047 COTE BRILLIANTE AV|3656-9-290.000|63113|Single Family Units|$12,491.00|$777.19|2023
-6040 MAPLE AV|4912-9-070.000|63112|Single Family Units|$46,439.00|$750.07|2025
-1421 UNION BLVD|3798-9-300.000|63113|Two Family Unit|$11,080.00|$439.49|2024
-6924 MINNESOTA AV|3014-9-120.000|63111|Single Family Units|$70,673.00|$1,889.61|2024
-3733 MAFFITT AV|4872-9-260.000|63113|Two Family Unit|$12,426.00|$773.39|2023
-4209 FAIR AV|3566-9-180.000|63115|Single Family Units|$15,833.00|$600.55|2024
-4204 W PENROSE ST|3573-9-155.000||Single Family Units|$12,757.00|$791.74|2023
-4224 N FLORISSANT AV|2435-9-060.000||Single Family Units|$8,699.00|$570.17|2023
-4335 MARCUS AV|4403-9-015.000|63115|Commercial|$24,500.00|$2,041.42|2024
-5418 PLOVER AV|5124-9-060.000|63120|Single Family Units|$16,566.00|$519.73|2024
-4316 STRODTMAN PL|2432-9-050.000|63107|Single Family Units|$8,407.00|$158.96|2025
-6172 LAURA AV|5491-9-030.000|63136|Single Family Units|$8,043.00|$153.26|2025
-4311 LEE AV|3573-9-615.000|63115|Four Family Unit|$13,276.00|$823.09|2023
-2007 E COLLEGE AV|3399-9-480.000|63107|Two Family Unit|$12,710.00|$4,238.13|2023
-5467 QUEENS AV|5143-9-300.000|63115|Two Family Unit|$31,472.00|$517.56|2025
-4429 HOLLY AV|3561-9-400.000|63115|Two Family Unit|$11,947.00|$3,660.26|2023
-4355 MARYLAND AV|3909-9-520.001|63108|Condominium - More Than 6 Units Per Bldg|$103,713.00|$1,767.11|2025
-3924 ASHLAND AV|5188-9-140.000|63107|Two Family Unit|$18,187.00|$311.28|2025
-3946 NATURAL BRIDGE AV|5191-9-070.000|63107|Two Family Unit|$12,810.00|$495.81|2024
-4724 LEXINGTON AV|4459-9-030.000|63115|Single Family Units|$10,963.00|$693.68|2023
-4635 COTE BRILLIANTE AV|4474-9-070.000|63113|Single Family Units|$25,948.00|$1,506.10|2023

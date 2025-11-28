@@ -1,23 +1,17 @@
 import time
 from bs4 import BeautifulSoup
-
 from datetime import datetime
-
-# from urllib.request import urlopen
-
 import urllib.request 
-
 from urllib import request
 
-class AppURLopener(urllib.request.FancyURLopener):
-    version = 'Mozilla/5.0'
 
+TAX_YEAR = 2025
 
-def fetch_tax_page_by_locator_number_requests(locator_number, tax_year='2024', debug=False):
+def get_parcel_year_amount_owed(locator_number, tax_year='2024', debug=False):
     # https://taxpayments.stlouiscountymo.gov/parcel/view/19U430038/2024
     url = 'https://taxpayments.stlouiscountymo.gov/parcel/view/' + locator_number
     url += '/' + tax_year
-    print("fetching tax for:", locator_number)
+    print("fetching tax for:", locator_number, tax_year)
     html = ''
     try:
         # Step 1: Go to the form page
@@ -54,55 +48,49 @@ def fetch_tax_page_by_locator_number_requests(locator_number, tax_year='2024', d
         if debug:
             print("tax fetch complete")
 
-    return html
-
-
-def parse_tax_details_page(html: str) -> dict:
-    """Parses the tax HTML and extracts specific data fields."""    
-    print('parsing tax details')
-
     soup = BeautifulSoup(html, "html.parser")
+    def get_text(selector):
+        el = soup.select_one(selector)
+        return el.get_text(strip=True) if el else None
 
-    target_a_inner_html = None
 
-    unpaid_cell = soup.select('#Billing1 > div:nth-child(2) > div:nth-child(2) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(7) > td:nth-child(2)')
+    tax_billed = get_text('#Billing1 > div:nth-child(2) > div:nth-child(2) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(2)')
+    amount_owed = get_text('#Billing1 > div:nth-child(2) > div:nth-child(2) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(7) > td:nth-child(2)')
 
+    if amount_owed:
+        amount_owed_number = money_string_to_float(amount_owed)
+    else:
+        print("couldn't get taxes", locator_number, tax_year)
+        return "couldn't get taxes"
+    
+    if amount_owed_number > 0:
+        return money_string_to_float(tax_billed)
+    else:
+        return 0
 
-    # Find all table rows with payment history
-    rows = soup.select("#PaymentHistoryNF > div.panel-body.overflow-auto > table > tbody > tr")
+def money_string_to_float(s):
+    no_dollar_s = s[1:]
+    no_commas_s = no_dollar_s.replace(',','')
+    return float(no_commas_s)
 
-    for i in range(0, len(rows), 2):
-        td5 = rows[i].select_one("td:nth-of-type(5)")
-        if td5:
-            value = td5.get_text(strip=True)
-            if value == "$0.00":
-                # Now grab the <a> in that same row under td.text-center
-                a_tag = rows[i].select_one("td.text-center > a")
-                if a_tag:
-                    target_a_inner_html = a_tag.decode_contents()
-                break  # stop after first match
-
-    return {
-        "unpaid_tax_total": unpaid_cell[0].get_text(strip=True),
-        "last_year_paid": target_a_inner_html,
-    }
-
-def parse_last_tax_year(html: str) -> str:
-    # parse tax HTML to extract just the last tax bill
-
-    soup = BeautifulSoup(html, "html.parser")
-
-    billing = soup.select_one("#Billing1")
-    print("billing", billing.get_text())
-
-    selector = "#Billing1 > div:nth-child(2) > div:nth-child(2) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(2)"
-
-    el = soup.select_one(selector)
-    return el.get_text(strip=True) if el else None
-
+def get_total_owed_history(locator_number, year):
+    total_owed = 0
+    year_int = int(year)
+    for i in range(year_int, year_int-12, -1):
+        amount = get_parcel_year_amount_owed(locator_number, str(i))
+        if amount == 0:
+            break
+        elif amount == "couldn't get taxes":
+            print("error in total")
+            return "error: couldn't get taxes " + year 
+        else:
+            print("adding total")
+            total_owed += amount
+    return total_owed
 
 
 def query_and_write(iterator):
+    global TAX_YEAR
     debug = False
     delimiter = '|'
     count = 1
@@ -120,26 +108,33 @@ def query_and_write(iterator):
         for line in fi:
             # if count > 200:
             #     return
-            for attempt in range(3):
+            locator_number = line.rstrip()
+            data_row = locator_number
+            for attempt in range(1):
                 try:
                     locator_number = line.rstrip()
                     print(count, locator_number)
 
-                    tax_results_page = fetch_tax_page_by_locator_number_requests(
+                    tax_amount_owed = get_total_owed_history(
                         locator_number,
-                        debug=debug
+                        str(TAX_YEAR)
                     )
-                    tax_details = parse_tax_details_page(tax_results_page)
+                    # print(tax_amount_owed)
+
+                    if type(tax_amount_owed) is str:
+                        tax_amount_owed_string = tax_amount_owed
+                    else:
+                        tax_amount_owed_string = f"{tax_amount_owed:.2f}"
+
                     if debug:
-                        print(tax_details)
+                        print(tax_amount_owed)
 
                     data_row = locator_number
                     data_row += delimiter
-                    data_row += tax_details['unpaid_tax_total']
-                    data_row += delimiter
-                    data_row += tax_details['last_year_paid']
+                    data_row += tax_amount_owed_string
                     data_row += '\n'
                     fo.write(data_row)
+                    data_row = ""
 
                 except Exception as e:
                     print("error on attempt", attempt)
@@ -148,8 +143,9 @@ def query_and_write(iterator):
                     continue
                 else:
                     break
+            if data_row != "":
+                fo.write(data_row + '\n')
             count += 1
-            return
 
 
 def main():
@@ -158,15 +154,22 @@ def main():
     count = 1
     # for i in range(9, 25):
         # print(i)
-    # query_and_write(-1)
+    query_and_write(0)
 
-    locator_number = '11G330915'
-    locator_number = '19U410063'
-    year = '2024'
-    page = fetch_tax_page_by_locator_number_requests(locator_number, year)
-    taxes = parse_last_tax_year(page)
-    print("got value:", taxes)
 
+
+    # locator_number = '19U410063'
+    # year = '2024'
+    # page = get_parcel_year_amount_owed(locator_number, year)
+    # # taxes = parse_last_tax_year(page)
+    # # print("got value:", taxes)
+
+
+    # locator_number = '11G330915'
+    # locator_number = '19U410063'
+    # year = '2024'
+    # history_total = get_total_owed_history(locator_number, year)
+    # print("total owed for", locator_number, history_total)
 
 
 if __name__ == '__main__':
@@ -182,6 +185,7 @@ if __name__ == '__main__':
     # print(d)
 
     main()
+
     # fetched 5 records in 132 s
     # property detail fetcher takes 14 s to do the same
     # trying browser reset

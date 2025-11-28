@@ -28,6 +28,8 @@ def reset_connection():
     global service
     global driver 
     global options 
+
+    driver.quit()
     driver = webdriver.Chrome(service=service, options=options)
 
 
@@ -158,7 +160,7 @@ def parse_property_details(html: str) -> dict:
     
     # step 2: get oldest tax year owed by iterating list
     
-    oldest_tax_year_owed = 2025
+    oldest_tax_year_owed = '2025'
 
     tax_owed_table = None
     
@@ -202,21 +204,33 @@ def parse_property_details(html: str) -> dict:
     }
 
 
-def query_property_and_write():
+def query_property_and_write(iterator):
     debug = False
     delimiter = '|'
     count = 1
-    input_file_name = 'data/city_address_list_sample.txt'
-    output_file_name = 'data/city_locator_output_data.csv'
+    if iterator == -1:
+
+        input_file_name = 'data/city_address_list_sample.txt'
+        output_file_name = 'data/city_locator_output_sample.csv'
+    elif iterator == 0:
+        input_file_name = 'data/city_address_list_master.txt'
+        output_file_name = 'data/city_locator_output_data.csv'
+    else:
+        input_file_name = 'data/city_address_list_master_part_%d.txt' % iterator
+        output_file_name = 'data/city_output_data_part_%d.csv' % iterator
+
     # input_file_name = 'locator_number_list.txt'
     # output_file_name = 'locator_output_data.csv'
     with open(input_file_name) as fi, open(output_file_name, 'w') as fo:
         for line in fi:
             # if count > 200:
             #     return
+            address = line.rstrip()
+            data_row = address
+            # print("data_row set", data_row)
             for attempt in range(3):
+
                 try:
-                    address = line.rstrip()
                     print(count, address)
                     results_page = fetch_property_page_by_address(
                         address,
@@ -243,7 +257,9 @@ def query_property_and_write():
                         data_row += delimiter
                         data_row += results_details['oldest_unpaid_tax_year']
                     data_row += '\n'
+                    # print("writing rich data row", data_row)
                     fo.write(data_row)
+                    data_row = ""
                 except Exception as e:
                     print("error on attempt", attempt)
                     print(e)
@@ -251,7 +267,10 @@ def query_property_and_write():
                     # time.sleep(30)
                     continue
                 else:
+                    print("reached break")
                     break
+            # print('writing data row', data_row)
+            fo.write(data_row)
             count += 1
 
 
@@ -265,7 +284,7 @@ def main():
     # # print(m)
     # r = parse_property_details(m)
     # print(r)
-    query_property_and_write()
+    query_property_and_write(5)
 
 if __name__ == '__main__':
     startTime = datetime.now()
