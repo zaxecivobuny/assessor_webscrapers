@@ -110,7 +110,7 @@ def query_and_write(iterator):
             #     return
             locator_number = line.rstrip()
             data_row = locator_number
-            for attempt in range(1):
+            for attempt in range(3):
                 try:
                     locator_number = line.rstrip()
                     print(count, locator_number)

@@ -230,6 +230,7 @@ def query_property_and_write(iterator):
             #     return
             locator_number = line.rstrip()
             data_row = locator_number
+            data_row += '\n'
             for attempt in range(3):
                 try:
                     print(count, locator_number)
