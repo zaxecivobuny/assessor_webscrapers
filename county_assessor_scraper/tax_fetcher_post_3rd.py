@@ -96,13 +96,13 @@ def query_and_write(iterator):
     count = 1
     if iterator == -1:
         input_file_name = 'data/locator_number_list_sample.txt'
-        output_file_name = 'data/tax_output_data_rich_sample.csv'
+        output_file_name = 'data/tax_output_data_post_3rd_rich_sample.csv'
     elif iterator == 0:
         input_file_name = 'data/locator_number_list.txt'
-        output_file_name = 'data/tax_output_data_rich.csv'       
+        output_file_name = 'data/tax_output_data_post_3rd_rich.csv'       
     else:
         input_file_name = 'data/locator_number_list_part_%d.txt' % iterator
-        output_file_name = 'data/tax_output_data_rich_part_%d.csv' % iterator
+        output_file_name = 'data/tax_output_data_rich_post_3rd_part_%d.csv' % iterator
 
     with open(input_file_name) as fi, open(output_file_name, 'w') as fo:
         for line in fi:

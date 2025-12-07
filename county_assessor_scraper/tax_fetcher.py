@@ -90,11 +90,11 @@ def fetch_tax_page_by_locator_number_requests(locator_number, tax_year='2024', d
         # Step 1: Go to the form page
         if debug:
             print("step 1")
-            req = request.Request(url, headers=headers) 
-            page = request.urlopen( req )
+        req = request.Request(url, headers=headers) 
+        page = request.urlopen( req )
 
-            html_bytes = page.read()
-            html = html_bytes.decode("utf-8")
+        html_bytes = page.read()
+        html = html_bytes.decode("utf-8")
 
         if debug:
             time.sleep(2)
@@ -194,6 +194,7 @@ def query_and_write(iterator):
                     data_row += tax_details['last_year_paid']
                     data_row += '\n'
                     fo.write(data_row)
+                    data_row = ""
 
                 except Exception as e:
                     print("error on attempt", attempt)
