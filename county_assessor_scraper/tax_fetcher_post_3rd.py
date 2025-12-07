@@ -68,94 +68,30 @@ def get_parcel_year_amount_owed(locator_number, tax_year='2024', debug=False):
     else:
         return 0
 
+def money_string_to_float(s):
+    no_dollar_s = s[1:]
+    no_commas_s = no_dollar_s.replace(',','')
+    return float(no_commas_s)
 
-def fetch_tax_page_by_locator_number_requests(locator_number, tax_year='2024', debug=False):
-    # https://taxpayments.stlouiscountymo.gov/parcel/view/19U430038/2024
-    url = 'https://taxpayments.stlouiscountymo.gov/parcel/view/' + locator_number
-    url += '/' + tax_year
-
-    headers={
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-        'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-        'Accept-Encoding': 'none',
-        'Accept-Language': 'en-US,en;q=0.8',
-        'Connection': 'keep-alive',
-        'referer': 'https://example.com',
-        # 'cookie': """your cookie value ( you can get that from your web page) """
-    }
-    print("fetching tax for:", locator_number, "using url:", url)
-    html = ''
-    try:
-        # Step 1: Go to the form page
-        if debug:
-            print("step 1")
-            req = request.Request(url, headers=headers) 
-            page = request.urlopen( req )
-
-            html_bytes = page.read()
-            html = html_bytes.decode("utf-8")
-
-        if debug:
-            time.sleep(2)
-            print("first fetch:")
-            print(html[:1000])  # Print first 1000 characters for debugging
-
-    except Exception as e:
-        print("Error occurred:", e)
-
-    finally:
-        if debug:
-            print("tax fetch complete")
-
-    return html
-
-
-def parse_tax_details_page(html: str) -> dict:
-    """Parses the tax HTML and extracts specific data fields."""    
-    print('parsing tax details')
-
-    soup = BeautifulSoup(html, "html.parser")
-
-    target_a_inner_html = None
-
-                               #Billing1 > div:nth-child(2) > div:nth-child(2) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(7) > td:nth-child(2)
-    unpaid_cell = soup.select('#Billing1 > div:nth-child(2) > div:nth-child(2) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(7) > td:nth-child(2)')
-    
-    if len(unpaid_cell) > 0:
-        unpaid_cell_contents = unpaid_cell[0].get_text(strip=True)
-    else:
-        unpaid_cell_contents = "Not Found"
-
-    # Find all table rows with payment history
-    rows = soup.select("#PaymentHistoryNF > div.panel-body.overflow-auto > table > tbody > tr")
-    # print("len(rows)", len(rows))
-
-    if len(rows) > 0:
-        for i in range(0, len(rows), 2):
-            td5 = rows[i].select_one("td:nth-of-type(5)")
-            if td5:
-                value = td5.get_text(strip=True)
-                if value == "$0.00":
-                    # Now grab the <a> in that same row under td.text-center
-                    a_tag = rows[i].select_one("td.text-center > a")
-                    if a_tag:
-                        target_a_inner_html = a_tag.decode_contents()
-                    break  # stop after first match
-    else:
-        target_a_inner_html = 'Not Found'
-
-    return {
-        "unpaid_tax_total": unpaid_cell_contents,
-        "last_year_paid": target_a_inner_html,
-    }
-
+def get_total_owed_history(locator_number, year):
+    total_owed = 0
+    year_int = int(year)
+    for i in range(year_int, year_int-12, -1):
+        amount = get_parcel_year_amount_owed(locator_number, str(i))
+        if amount == 0:
+            break
+        elif amount == "couldn't get taxes":
+            print("error in total")
+            return "error: couldn't get taxes " + year 
+        else:
+            print("adding total")
+            total_owed += amount
+    return total_owed
 
 
 def query_and_write(iterator):
     global TAX_YEAR
     debug = False
-    # debug = True
     delimiter = '|'
     count = 1
     if iterator == -1:
@@ -179,21 +115,26 @@ def query_and_write(iterator):
                     locator_number = line.rstrip()
                     print(count, locator_number)
 
-                    tax_results_page = fetch_tax_page_by_locator_number_requests(
+                    tax_amount_owed = get_total_owed_history(
                         locator_number,
-                        debug=debug
+                        str(TAX_YEAR)
                     )
-                    tax_details = parse_tax_details_page(tax_results_page)
+                    # print(tax_amount_owed)
+
+                    if type(tax_amount_owed) is str:
+                        tax_amount_owed_string = tax_amount_owed
+                    else:
+                        tax_amount_owed_string = f"{tax_amount_owed:.2f}"
+
                     if debug:
-                        print(tax_details)
+                        print(tax_amount_owed)
 
                     data_row = locator_number
                     data_row += delimiter
-                    data_row += tax_details['unpaid_tax_total']
-                    data_row += delimiter
-                    data_row += tax_details['last_year_paid']
+                    data_row += tax_amount_owed_string
                     data_row += '\n'
                     fo.write(data_row)
+                    data_row = ""
 
                 except Exception as e:
                     print("error on attempt", attempt)
@@ -213,7 +154,7 @@ def main():
     count = 1
     # for i in range(9, 25):
         # print(i)
-    query_and_write(-1)
+    query_and_write(0)
 
 
 
