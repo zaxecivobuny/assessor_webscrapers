@@ -284,7 +284,7 @@ def main():
     # # print(m)
     # r = parse_property_details(m)
     # print(r)
-    query_property_and_write(1)
+    query_property_and_write(0)
 
 if __name__ == '__main__':
     startTime = datetime.now()
